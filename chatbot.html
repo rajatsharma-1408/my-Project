@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UniConnect AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#141e30,#243b55);
+}
+.chat-container{
+width:95%;
+max-width:900px;
+height:90vh;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+border-radius:25px;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+box-shadow:0 20px 50px rgba(0,0,0,0.4);
+}
+.header{
+background:rgba(0,0,0,0.6);
+color:white;
+padding:18px;
+font-size:18px;
+font-weight:600;
+text-align:center;
+}
+.chat-box{
+flex:1;
+padding:20px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+.message{
+padding:12px 16px;
+border-radius:18px;
+max-width:75%;
+animation:fadeIn 0.3s ease;
+}
+.user{
+background:#fcc419;
+align-self:flex-end;
+font-weight:600;
+}
+.bot{
+background:rgba(255,255,255,0.15);
+color:white;
+align-self:flex-start;
+white-space:pre-line;
+}
+.input-area{
+display:flex;
+padding:15px;
+background:rgba(0,0,0,0.5);
+}
+textarea{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+outline:none;
+resize:none;
+height:45px;
+}
+button{
+padding:12px 20px;
+margin-left:10px;
+border:none;
+border-radius:12px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+<div class="header">🎓 UniConnect TalkBot</div>
+<div class="chat-box" id="chatBox"></div>
+
+<div class="input-area">
+<textarea id="userInput" placeholder="Ask anything..."></textarea>
+<button onclick="sendMessage()">Send</button>
+</div>
+</div>
+
+<script>
+
+const chatBox=document.getElementById("chatBox");
+const inputField=document.getElementById("userInput");
+
+// ===== USER NAME =====
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+const fees = localStorage.getItem("fees_" + currentUser.email);
+const feesDate = localStorage.getItem("feesDate_" + currentUser.email);
+
+const studentName = currentUser ? currentUser.name.split(" ")[0] : "Student";
+
+// ===== AUTO GREETING =====
+const hour=new Date().getHours();
+let greet="Hello";
+if(hour<12) greet="Good Morning";
+else if(hour<18) greet="Good Afternoon";
+else greet="Good Evening";
+
+addBot(greet+" "+studentName+" 👋");
+addBot("How can I help you?");
+
+// ENTER KEY SEND
+inputField.addEventListener("keydown",function(e){
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault();
+sendMessage();
+}
+});
+
+function sendMessage(){
+let text=inputField.value.trim();
+if(!text) return;
+addUser(text);
+inputField.value="";
+setTimeout(()=>reply(text.toLowerCase()),400);
+}
+
+// ===== NEW DATA (ADDED ONLY) =====
+
+const contactInfo = {
+phone:"+91 9017080655",
+email:"hellorajatsharma@gmail.com",
+Admin:"Rajat Sharma"
+};
+
+const timetable = {
+mon:["CD","MWC","Adv Java","Data Science","AI","AI Lab"],
+tue:["MWC","Adv Java","Data Science","CD","AI","AI Lab"],
+wed:["Adv Java","ADBMS","AI","MWC","CD","Project"],
+thu:["CD","ADBMS","COI","AI","CD","Project"],
+fri:["ADBMS","AI","Data Science","COI","COI","Project"]
+};
+
+const faculty = {
+"adbms":"Ms. Neelam Dahiya",
+"cd":"Ms. Bhawna",
+"ai":"Ms. Archana Rohilla",
+"adv java":"Ms. Ayushi Deewan",
+"mwc":"Ms. Sonu Rana",
+"data science":"Ms. Richa"
+};
+
+const exams = JSON.parse(localStorage.getItem("examData")) || [];
+
+
+// ===== FINAL REPLY SYSTEM =====
+function reply(msg){
+
+msg = msg.toLowerCase().trim();
+
+// ATTENDANCE CHECK (ADD THIS ONLY)
+if(msg.includes("attendance")){
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+
+  if(!user){
+    addBot("Please login first 😅");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("attData_" + user.email)) || {};
+
+  let total = 0, present = 0;
+
+  for(let date in data){
+    data[date].forEach(s=>{
+      if(s.status==="P" || s.status==="A"){
+        total++;
+        if(s.status==="P") present++;
+      }
+    });
+  }
+
+  let per = total ? Math.round((present/total)*100) : 0;
+
+  if(per < 75){
+  addBot("⚠ Your Attendance is " + per + "% , plse attend more classes to attain 75%");
+}else{
+  addBot("🔥 Great ! Your Attendance is " + per + "% ");
+}
+
+return;
+}
+
+/* HELLO */
+
+if(msg === "hello"){
+addBot(`Hello ${studentName}! How can I help you ?`);
+return;
+}
+
+if(msg === "hi"){
+addBot(`Hi ${studentName}!`);
+return;
+}
+
+if(msg === "hii"){
+addBot(`Hii ${studentName}!`);
+return;
+}
+
+if(msg === "hey"){
+addBot(`Hey! What’s up?`);
+return;
+}
+
+/* GREETINGS (UNCHANGED) */
+
+if(msg === "good morning"){
+addBot(`Good morning ${studentName}! Hope you have a great day ahead ☀️`);
+return;
+}
+
+if(msg === "good afternoon"){
+addBot(`Good afternoon! How’s your day going?`);
+return;
+}
+
+if(msg === "good evening"){
+addBot(`Good evening! 😊`);
+return;
+}
+
+if(msg === "good night"){
+addBot(`Good night! Sleep well 🌙`);
+return;
+}
+
+/* BASIC TALK (UNCHANGED) */
+
+if(msg === "how are you"){
+addBot(`I'm doing great! What about you?`);
+return;
+}
+
+if(msg === "what are you doing"){
+addBot(`I’m here to help you anytime 😄`);
+return;
+}
+
+if(msg === "who are you"){
+addBot(`I’m your personal AI chatbot assistant 🤖`);
+return;
+}
+
+/* NAME */
+
+if(msg.startsWith("my name is")){
+let name = msg.replace("my name is","").trim();
+if(name){
+let formatted = name.charAt(0).toUpperCase() + name.slice(1);
+addBot(`Nice to meet you, ${formatted}!`);
+}
+return;
+}
+
+/* MEMORY */
+
+if(msg === "do you know me"){
+addBot(`Yes ${studentName}, I remember you! 😊`);
+return;
+}
+
+/* FUN */
+
+if(msg === "tell me a joke"){
+addBot(`Why don’t students trust atoms? Because they make up everything 😂`);
+return;
+}
+
+if(msg === "i am bored"){
+addBot(`Let’s do something fun! Want a joke or a game?`);
+return;
+}
+
+/* THANKS */
+
+if(msg === "thank you"){
+addBot(`You’re welcome! 😊`);
+return;
+}
+
+if(msg === "thanks"){
+addBot(`Anytime! 👍`);
+return;
+}
+
+/* BYE */
+
+if(msg === "bye"){
+addBot(`Goodbye ${studentName}! Have a nice day 👋`);
+return;
+}
+
+if(msg === "see you"){
+addBot(`See you soon! 😊`);
+return;
+}
+
+/* SMALL */
+
+if(msg === "ok"){
+addBot(`Alright! Let me know if you need anything 👍`);
+return;
+}
+
+if(msg === "yes"){
+addBot(`Great! Tell me more 😊`);
+return;
+}
+
+if(msg === "no"){
+addBot(`No problem! Let me know if you need help later 👍`);
+return;
+}
+
+/* ===== NEW FEATURES (ADDED ONLY) ===== */
+
+if(msg.includes("contact")){
+addBot(`📞 ${contactInfo.phone}\n📧 ${contactInfo.email}\n🏢 ${contactInfo.office}`);
+return;
+}
+
+if(msg.includes("timetable") || msg.includes("schedule")){
+let today = new Date().toLocaleDateString('en-US',{weekday:'short'}).toLowerCase();
+let dayMap = {mon:"mon",tue:"tue",wed:"wed",thu:"thu",fri:"fri"};
+
+if(dayMap[today]){
+addBot(`📅 Today's Timetable:\n` + timetable[dayMap[today]].join(" , "));
+}else{
+addBot("Today is holiday 😄");
+}
+return;
+}
+
+if(msg.includes("teach") || msg.includes("faculty")){
+for(let sub in faculty){
+if(msg.includes(sub)){
+addBot(`👨‍🏫 ${sub.toUpperCase()} is taught by ${faculty[sub]}`);
+return;
+}
+}
+addBot("Please mention subject name 😊");
+return;
+}
+
+// 💰 FEES CHECK
+if(msg.includes("fees")){
+
+  if(fees){
+    let text = "💰 Your Fees Status:\n";
+    text += "Amount Paid: ₹ " + fees;
+
+    if(feesDate){
+      text += "\nPaid On: " + feesDate;
+    }
+
+    addBot(text);
+  }else{
+    addBot("📌 No fee record found. Please contact administration.");
+  }
+
+  return;
+}
+
+/* ===== FINAL TIMETABLE SYSTEM ===== */
+
+if(msg.includes("timetable") || msg.includes("lecture")){
+
+    const days = ["sun","mon","tue","wed","thu","fri","sat"];
+    const todayIndex = new Date().getDay();
+
+    let targetDay;
+
+    if(msg.includes("tomorrow") || msg.includes("kal")){
+        targetDay = days[(todayIndex+1)%7];
+    }
+    else if(msg.includes("yesterday")){
+        targetDay = days[(todayIndex+6)%7];
+    }
+    else{
+        targetDay = days[todayIndex];
+    }
+
+    if(timetable[targetDay]){
+        let label = "Today's";
+        if(msg.includes("tomorrow") || msg.includes("kal")) label = "Tomorrow's";
+        if(msg.includes("yesterday")) label = "Yesterday's";
+
+        addBot(`📅 ${label} Timetable:\n` + timetable[targetDay].join(" , "));
+    }else{
+        addBot(`${targetDay.toUpperCase()} is holiday 😄`);
+    }
+
+    return;
+}
+// ===== PROFESSIONAL EXAM AI SYSTEM =====
+
+// 📅 TODAY EXAM
+if(msg.includes("today exam")){
+  let today = new Date().toISOString().split("T")[0];
+
+  let found = exams.filter(e => e.date === today);
+
+  if(found.length){
+    let list = found.map(e => e.subject).join(", ");
+    addBot("📅 You have the following exam(s) scheduled today: " + list);
+  }else{
+    addBot("📅 There are no exams scheduled for today.");
+  }
+  return;
+}
+
+// 📆 EXAM ON SPECIFIC DATE
+if(msg.includes("exam on")){
+  let words = msg.split(" ");
+  let date = words[words.length-1];
+
+  let found = exams.filter(e => e.date.includes(date));
+
+  if(found.length){
+    let list = found.map(e => e.subject + " ("+e.date+")").join("\n");
+    addBot("📅 The following exam(s) are scheduled:\n" + list);
+  }else{
+    addBot("📅 No exams are scheduled for the selected date.");
+  }
+  return;
+}
+
+// 📘 SUBJECT EXAM DATE
+if(msg.includes("exam")){
+  for(let e of exams){
+    if(msg.includes(e.subject.toLowerCase())){
+      addBot(`📘 The ${e.subject} exam is scheduled on ${e.date}.`);
+      return;
+    }
+  }
+}
+
+// 📊 FIRST EXAM
+if(msg.includes("start exam") || msg.includes("first exam")){
+  if(exams.length){
+    let sorted = [...exams].sort((a,b)=> new Date(a.date)-new Date(b.date));
+    addBot("🚀 Your examination schedule begins with " + sorted[0].subject + " on " + sorted[0].date + ".");
+  }else{
+    addBot("📅 No exam schedule is currently available.");
+  }
+  return;
+}
+
+// 🏁 LAST EXAM
+if(msg.includes("last exam")){
+  if(exams.length){
+    let sorted = [...exams].sort((a,b)=> new Date(b.date)-new Date(a.date));
+    addBot("🏁 Your final exam is " + sorted[0].subject + " scheduled on " + sorted[0].date + ".");
+  }else{
+    addBot("📅 No exam schedule is currently available.");
+  }
+  return;
+}
+
+/* DEFAULT */
+
+addBot(`Sorry ${studentName}, I think you forgot what you want to ask 😅`);
+}
+
+function addUser(msg){
+chatBox.innerHTML+=`<div class="message user">${msg}</div>`;
+chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+function addBot(msg){
+chatBox.innerHTML+=`<div class="message bot">${msg}</div>`;
+chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+
+</script>
+
+</body>
+</html>

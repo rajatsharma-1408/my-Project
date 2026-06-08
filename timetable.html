@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniConnect - Time Table</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color:white;
+
+    /* Premium Gradient Background */
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+/* page spacing */
+.container{
+    padding:30px;
+}
+
+/* title */
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    font-size:28px;
+    letter-spacing:1px;
+}
+
+/* glass card */
+.table-wrapper{
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    overflow:hidden;
+}
+
+/* table */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td{
+    padding:14px;
+    text-align:center;
+    font-size:14px;
+}
+
+/* header */
+th{
+    background:#fcc419;
+    color:black;
+}
+
+/* rows */
+td{
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+/* hover effect like apps */
+tr:hover{
+    background: rgba(255,255,255,0.05);
+    transition:0.3s;
+}
+
+/* back button */
+.back-btn{
+    display:inline-block;
+    margin:25px auto 0;
+    padding:12px 30px;
+    background:#fcc419;
+    color:black;
+    text-decoration:none;
+    border-radius:25px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Time Table (VI Semester)</h1>
+
+    <div class="table-wrapper">
+    <table>
+        <tr>
+            <th>Day</th>
+            <th>9:00-10:00</th>
+            <th>10:00-10:50</th>
+            <th>10:50-11:40</th>
+            <th>11:40-12:30</th>
+            <th>1:30-2:20</th>
+            <th>2:20-3:10</th>
+        </tr>
+
+        <tr>
+            <td>MON</td>
+            <td>CD</td>
+            <td>MWC</td>
+            <td>Adv. JAVA</td>
+            <td>Data Science</td>
+            <td>AI Lab</td>
+            <td>AI Lab</td>
+        </tr>
+
+        <tr>
+            <td>TUE</td>
+            <td>MWC</td>
+            <td>Adv. JAVA</td>
+            <td>Data Science</td>
+            <td>CD</td>
+            <td>AI Lab</td>
+            <td>AI Lab</td>
+        </tr>
+
+        <tr>
+            <td>WED</td>
+            <td>Adv. JAVA</td>
+            <td>ADBMS</td>
+            <td>AI</td>
+            <td>MWC</td>
+            <td>CD Lab</td>
+            <td>Project</td>
+        </tr>
+
+        <tr>
+            <td>THU</td>
+            <td>CD</td>
+            <td>AI</td>
+            <td>COI</td>
+            <td>ADBMS</td>
+            <td>CD Lab</td>
+            <td>Project</td>
+        </tr>
+
+        <tr>
+            <td>FRI</td>
+            <td>ADBMS</td>
+            <td>AI</td>
+            <td>Data Science</td>
+            <td>COI</td>
+            <td>COI</td>
+            <td>PDSE</td>
+        </tr>
+    </table>
+    </div>
+
+    <center>
+        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+    </center>
+</div>
+
+</body>
+</html>

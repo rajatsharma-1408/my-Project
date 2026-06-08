@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attendance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;}
+
+body{
+height:100vh;
+background:linear-gradient(135deg,#141e30,#243b55);
+}
+
+/* MAIN */
+.container{
+height:100vh;
+display:flex;
+flex-direction:column;
+padding:15px;
+color:white;
+}
+
+/* TOP */
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:62px;
+position:relative;
+}
+
+/* HIDDEN BUT CLICKABLE INPUT */
+input[type="date"]{
+position:absolute;
+left:0;
+top:0;
+width:200px;
+height:100%;
+opacity:0;
+cursor:pointer;
+}
+
+/* NEW DATE TEXT */
+#dateText{
+font-size:22px;
+font-weight:600;
+cursor:pointer;
+padding:8px 14px;
+border:1.5px solid rgba(255,255,255,0.8);
+border-radius:10px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(8px);
+}
+
+.percent{
+background:#fcc419;
+color:black;
+padding:10px 18px;
+border-radius:22px;
+font-weight:bold;
+margin-top:42px;
+}
+
+/* SUBJECT LIST */
+.list{
+flex:1;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:26px;
+}
+
+/* SUBJECT CARD */
+.subject{
+background:rgba(255,255,255,0.12);
+padding:18px 16px;
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:22px;
+}
+
+/* BUTTONS */
+.actions button{
+margin-left:5px;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.present{background:#51cf66;}
+.absent{background:#ff6b6b;}
+.off{background:#adb5bd;}
+
+.active{
+outline:2px solid white;
+}
+
+/* BOTTOM */
+.bottom{
+display:flex;
+gap:15px;
+padding-top:4px;
+}
+
+.bottom button{
+flex:0.7;
+padding:16px;
+border:none;
+border-radius:12px;
+font-size:22px;
+background:#fcc419;
+font-weight:bold;
+width:60%;
+}
+
+/* BACK */
+.back{
+text-align:center;
+margin-top:56px;
+transform: translateY(-35px);
+}
+
+.back button{
+padding:15px 25px;
+border:none;
+border-radius:15px;
+background:white;
+font-weight:bold;
+font-size:22px;
+width:60%;
+}
+
+/* TIMETABLE MODAL */
+.tt-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.tt-box{
+background:#1e293b;
+padding:15px;
+border-radius:15px;
+width:95%;
+max-width:500px;
+color:white;
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #444;
+padding:10px;
+}
+
+th{
+background:#0f766e;
+}
+
+.tt-box button{
+margin-top:10px;
+padding:10px;
+width:100%;
+border:none;
+border-radius:10px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top">
+<div id="dateText"></div>
+<input type="date" id="dateInput">
+<div class="percent" id="percent">0%</div>
+</div>
+
+<div class="list" id="list"></div>
+
+<div class="bottom">
+<button onclick="addSubject()">+ Subject</button>
+<button onclick="openTT()">Timetable</button>
+</div>
+
+<div class="back">
+<button onclick="goBack()">Back to Dashboard</button>
+</div>
+
+</div>
+
+<!-- TIMETABLE -->
+<div class="tt-modal" id="ttModal">
+<div class="tt-box">
+
+<h2>Weekly Timetable</h2>
+
+<table>
+<tr>
+<th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th>
+</tr>
+
+<tr>
+<td>CD</td><td>MWC</td><td>Adv. JAVA</td><td>CD</td><td>ADBMS</td>
+</tr>
+<tr>
+<td>MWC</td><td>Adv. JAVA</td><td>ADBMS</td><td>AI</td><td>AI</td>
+</tr>
+<tr>
+<td>Adv.Java</td><td>Data Science</td><td>AI</td><td>COI</td><td>Data Science</td>
+</tr>
+<tr>
+<td>Data Science</td><td>CD/td><td>MWC</td><td>ADBMS</td><td>COI</td>
+</tr>
+<tr>
+<td>AI Lab G1/ AJ Lab G2</td><td>AI Lab G2/ AJ Lab G1</td><td>CD Lab G1/ G2 Meet your project supervisor</td><td>CD Lab G2/ Meet your project supervisor</td><td>COI</td>
+</tr>
+</table>
+
+<button onclick="closeTT()">Close</button>
+
+</div>
+</div>
+
+<script>
+
+// FORMAT DATE
+function formatDate(date){
+let d = new Date(date);
+
+let days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+return days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+}
+
+// TIMETABLE
+const timetable = {
+mon:["CD","MWC","AdvJava","Data Science","AI Lab G1/ AJ Lab G2"],
+tue:["MWC","Adv.JAVA","Data Science","CD","AI Lab G2/ AJ Lab G1"],
+wed:["Adv.Java","ADBMS","AI","MWC","CD Lab G1/G2 meet your project supervisor"],
+thu:["CD","AI","COI","ADBMS","CD Lab G2/G1 meet your project supervisor"],
+fri:["ADBMS","AI","DS","COI","COI"]
+};
+
+const user = JSON.parse(localStorage.getItem("currentUser"));
+if(!user){
+    window.location.href = "index.html";
+}
+let data = JSON.parse(localStorage.getItem("attData_" + user.email)) || {};
+
+let dateInput=document.getElementById("dateInput");
+dateInput.value = new Date().toISOString().split('T')[0];
+
+// CLICK FIX
+document.getElementById("dateText").addEventListener("click",()=>{
+dateInput.click();
+});
+
+// DAY
+function getDay(date){
+let d = new Date(date).getDay(); // 0-6
+
+let map = ["sun","mon","tue","wed","thu","fri","sat"];
+return map[d];
+}
+
+
+// LOAD
+function load(){
+let key=dateInput.value;
+let day=getDay(key);
+
+if(!data[key]){
+let subjects = timetable[day] || [];
+data[key] = subjects.map(s=>({name:s,status:""}));
+}
+if(!timetable[day]){
+  document.getElementById("list").innerHTML = 
+
+"<div class='no-class'>😎 No Classes Today</div>";
+
+document.getElementById("dateText").innerText = formatDate(key);
+
+// 🔥 IMPORTANT: percent update call karo
+
+updatePercent();
+
+return;
+
+}
+
+
+// UPDATE DATE TEXT
+document.getElementById("dateText").innerText = formatDate(key);
+
+render();
+}
+
+// RENDER
+function render(){
+let key=dateInput.value;
+let subs=data[key] || [];
+
+let html="";
+
+subs.forEach((s,i)=>{
+html+=`
+<div class="subject">
+<div>${s.name}</div>
+
+<div class="actions">
+<button class="present ${s.status==='P'?'active':''}" onclick="mark(${i},'P')">✔</button>
+<button class="absent ${s.status==='A'?'active':''}" onclick="mark(${i},'A')">✖</button>
+<button class="off ${s.status==='O'?'active':''}" onclick="mark(${i},'O')">Off</button>
+</div>
+</div>`;
+});
+
+document.getElementById("list").innerHTML=html;
+updatePercent();
+}
+
+// MARK
+function mark(i,type){
+let key=dateInput.value;
+data[key][i].status=type;
+localStorage.setItem("attData_" + user.email, JSON.stringify(data));
+render();
+}
+
+// PERCENT
+function updatePercent(){
+
+let total = 0;
+let present = 0;
+
+for(let date in data){
+  let subs = data[date];
+
+  subs.forEach(s=>{
+    if(s.status==="P" || s.status==="A"){
+      total++;
+
+      if(s.status==="P"){
+        present++;
+      }
+    }
+  });
+}
+
+let per = total ? Math.round((present/total)*100) : 0;
+
+let box = document.getElementById("percent");
+box.innerText = per + "%";
+
+// 🔥 NEW PART
+if(per < 75){
+  box.style.background = "#ff6b6b"; // red
+}else{
+  box.style.background = "#fcc419"; // normal yellow
+}
+
+}
+
+// ADD SUBJECT
+function addSubject(){
+let name=prompt("Enter Subject");
+if(name){
+data[dateInput.value].push({name:name,status:""});
+localStorage.setItem("attData_" + user.email, JSON.stringify(data));
+render();
+}
+}
+
+dateInput.addEventListener("change",load);
+
+function openTT(){
+document.getElementById("ttModal").style.display="flex";
+}
+
+function closeTT(){
+document.getElementById("ttModal").style.display="none";
+}
+
+function goBack(){
+window.location.href="dashboard.html";
+}
+
+load();
+
+</script>
+
+</body>
+</html>

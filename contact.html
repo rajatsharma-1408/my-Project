@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact - UniConnect</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+body{
+    margin:0;
+    font-family:Segoe UI, sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* CONTACT CARD */
+
+.contact-container{
+    width:420px;
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:30px;
+    color:white;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h2{
+    margin:0;
+}
+
+.header p{
+    color:#bbb;
+    font-size:14px;
+}
+
+/* CONTACT ITEMS */
+
+.contact-item{
+    display:flex;
+    align-items:center;
+    padding:12px;
+    margin:12px 0;
+    border-radius:10px;
+    background:rgba(255,255,255,0.05);
+    transition:0.3s;
+}
+
+.contact-item:hover{
+    background:rgba(255,255,255,0.15);
+}
+
+.contact-item i{
+    font-size:20px;
+    width:35px;
+}
+
+/* EMAIL LINK */
+
+.email-link{
+    color:#ffd43b;
+    text-decoration:none;
+}
+
+.email-link:hover{
+    text-decoration:underline;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+    margin-top:20px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#f6c90e;
+    color:black;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:#ffd43b;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="contact-container">
+
+<div class="header">
+<h2>Contact Support</h2>
+<p>UniConnect Help Desk</p>
+</div>
+
+<div class="contact-item">
+<i class="fa-solid fa-user"></i>
+<span>Admin : Rajat Sharma</span>
+</div>
+
+<div class="contact-item">
+<i class="fa-solid fa-envelope"></i>
+<span>
+Email :
+<a class="email-link" href="mailto:hellorajatsharma@gmail.com">
+hellorajatsharma@gmail.com
+</a>
+</span>
+</div>
+
+<div class="contact-item">
+<i class="fa-solid fa-phone"></i>
+<span>Phone : +91 9017080655</span>
+</div>
+
+<div class="contact-item">
+<i class="fa-solid fa-location-dot"></i>
+<span>College Campus Admin</span>
+</div>
+
+<button class="back-btn" onclick="goBack()">Back to Dashboard</button>
+
+</div>
+
+<script>
+
+function goBack(){
+window.location.href="dashboard.html";
+}
+
+</script>
+
+</body>
+</html>

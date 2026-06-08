@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Notes</title>
+
+<style>
+body{
+font-family:Segoe UI;
+background:linear-gradient(135deg,#141e30,#243b55);
+color:white;
+padding:20px;
+}
+
+h2{
+font-size:32px;
+margin-bottom:20px;
+}
+
+/* TOP BAR */
+.top-bar{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:25px;
+}
+
+select{
+padding:12px;
+border-radius:10px;
+border:none;
+background:#facc15;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* CARD */
+.note-card{
+background:rgba(255,255,255,0.08);
+padding:20px;
+border-radius:15px;
+margin-top:15px;
+border-left:6px solid #facc15;
+cursor:pointer;
+transition:0.3s;
+}
+
+.note-card:hover{
+transform:scale(1.02);
+background:rgba(255,255,255,0.12);
+}
+
+/* TEXT */
+.note-title{
+font-size:18px;
+font-weight:bold;
+}
+
+.note-unit{
+opacity:0.8;
+margin-top:5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>📚 Notes</h2>
+
+<div class="top-bar">
+<select id="sem">
+<option value="">Semester</option>
+<option value="6">Semester 6</option>
+</select>
+
+<select id="subject">
+<option value="">Select Subject</option>
+<option value="AI">AI</option>
+<option value="ADBMS">ADBMS</option>
+<option value="CD">CD</option>
+</select>
+</div>
+
+<div id="notesContainer">
+<p style="opacity:0.6">Select filters to view notes</p>
+</div>
+
+<script>
+
+// 🔥 BAS YAHI EDIT KARNA HAI (LINK DALNA)
+const notes = [
+
+{
+subject:"ADBMS",
+unit:"Unit 1",
+sem:"6",
+link:"https://notesneo.vercel.app/notes/6th-sem-adbms-unit-1"
+},
+
+{
+subject:"AI",
+unit:"Unit 1",
+sem:"6",
+link:"https://example.com/ai-notes"
+},
+
+{
+subject:"CD",
+unit:"Unit 1",
+sem:"6",
+link:"https://example.com/cd-notes"
+}
+
+];
+
+// 🔍 FILTER FUNCTION
+function filterNotes(){
+
+let subject = document.getElementById("subject").value;
+let sem = document.getElementById("sem").value;
+
+let container = document.getElementById("notesContainer");
+container.innerHTML="";
+
+// no filter
+if(!subject && !sem){
+container.innerHTML = "<p style='opacity:0.6'>Select filters to view notes</p>";
+return;
+}
+
+// filter logic
+let filtered = notes.filter(n => 
+(!subject || n.subject===subject) &&
+(!sem || n.sem===sem)
+);
+
+// no result
+if(filtered.length === 0){
+container.innerHTML = "<p>No notes found 😅</p>";
+return;
+}
+
+// show cards
+filtered.forEach(n=>{
+container.innerHTML += `
+<div class="note-card" onclick="openNote('${n.link}')">
+<div class="note-title">${n.subject}</div>
+<div class="note-unit">📘 ${n.unit}</div>
+</div>`;
+});
+
+}
+
+// 🚀 OPEN LINK (RESULT TYPE)
+function openNote(link){
+window.location.href = link;
+}
+
+// EVENTS
+document.getElementById("subject").addEventListener("change",filterNotes);
+document.getElementById("sem").addEventListener("change",filterNotes);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniConnect - Dashboard</title>
+
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="main-wrapper">
+
+    <header class="black-header">
+        <!-- ☰ MENU ICON -->
+<div class="menu-icon" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+</div>
+
+<!-- SIDE MENU -->
+<div class="side-menu" id="sideMenu">
+    <div class="menu-icon inside" onclick="toggleMenu()">
+    <i class="fa-solid fa-xmark"></i>
+     </div>
+    <h2>User Info</h2>
+
+    <p><b>Name:</b> <span id="menuName"></span></p>
+    <p><b>Course:</b>BTech</p>
+    <p><b>Branch:</b> CSE</p>
+    <p><b>Gender: Male </b></p>
+    <p><b>Roll No:</b> <span id="menuRoll"></span></p>
+    <p><b>Semester:</b> 6th Sem</p>
+  
+    <button onclick="logout()">Logout</button>
+</div>
+
+        <div class="profile-section">
+           <div class="avatar" onclick="openOptions()">
+            <img id="profilePic" src="default.png">
+              </div>
+
+<!-- hidden file input -->
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<!-- popup -->
+          <div class="photo-popup" id="photoPopup">
+          <div class="popup-box">
+        <button onclick="changePhoto()">Change Photo</button>
+        <button onclick="deletePhoto()">Delete Photo</button>
+        <button onclick="closePopup()">Cancel</button>
+          </div>
+          </div>
+
+           
+
+            <div class="welcome-info">
+                <h1 id="welcomeText">Welcome Rajat! 👋</h1>
+                <h2 class="name-highlight" id="fullName">Rajat Sharma</h2>
+                <p class="email-sub" id="email">hellorajatsharma@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item"><span>Branch</span><p>CSE</p></div>
+            <div class="stat-item"><span>Sem</span><p>06</p></div>
+            <div class="stat-item"><span>Roll No.</span><p id="roll">23CS34</p></div>
+            <div class="stat-item"><span>Batch</span><p>2023-2027</p></div>
+        </div>
+
+    </header>
+
+    <section class="grid-section">
+        <div class="dashboard-grid">
+
+            <div class="menu-card attendance-card" onclick="openAttendance()">
+             <i class="fa-solid fa-user-check" style="color:#5c7cfa"></i>
+             <p>Attendance</p>
+
+             <div class="att-badge" id="attPercent">--%</div>
+            </div>
+
+            <div class="menu-card" onclick="openTimetable()">
+                <i class="fa-solid fa-clock" style="color:#22b8cf"></i>
+                <p>Time Table</p>
+            </div>
+
+            <!-- ✅ FIXED CALENDAR CARD -->
+            <div class="menu-card" onclick="openCalender()">
+                <i class="fa-solid fa-calendar-days" style="color:#ff922b"></i>
+                <p>Calendar</p>
+            </div>
+
+            <div class="menu-card" onclick="openNotes()">
+                <i class="fa-solid fa-book-open" style="color:#845ef7"></i>
+                <p>Notes</p>
+            </div>
+
+            <div class="menu-card" onclick="openAnnouncement()">
+                <i class="fa-solid fa-bullhorn" style="color:#ff6b6b"></i>
+           <p>Announcement</p>
+            </div>
+
+            <div class="menu-card" onclick="openTransport()">
+                <i class="fa-solid fa-bus" style="color:#fcc419"></i>
+                <p>Transport</p>
+            </div>
+
+            <div class="menu-card" onclick="openExam()">
+                <i class="fa-solid fa-list-check" style="color:#51cf66"></i>
+                <p>Exam Schedule</p>
+            </div>
+
+            <div class="menu-card admin-only" onclick="openAdminFees()">
+            <i class="fa-solid fa-wallet"></i>
+           <p>Manage Fees</p>
+            </div>
+
+            <div class="menu-card" onclick="openResult()">
+                <i class="fa-solid fa-graduation-cap" style="color:#fa5252"></i>
+                <p>Result</p>
+            </div>
+
+            <div class="menu-card" onclick="openFees()">
+                <i class="fa-solid fa-wallet" style="color:#20c997"></i>
+                <p>Fees</p>
+            </div>
+
+            <div class="menu-card" onclick="openFaculty()">
+                <i class="fa-solid fa-chalkboard-user" style="color:#748ffc"></i>
+                <p>Faculty</p>
+            </div>
+
+              <div class="menu-card" onclick="openBunkPlanner()">
+              <i class="fa-solid fa-user-ninja" style="color:#adb5bd"></i>
+               <p>Bunk Planner</p>
+               </div>
+
+               
+
+            <div class="menu-card" onclick="openContact()">
+                <i class="fa-solid fa-address-book" style="color:#495057"></i>
+                <p>Contact</p>
+            </div>
+           
+           <div class="ai-widget" onclick="openBot()">
+
+    <div class="ai-avatar">
+        <i class="fa-solid fa-robot"></i>
+    </div>
+
+    <div class="ai-content">
+        <p class="ai-title">TalkBot</p>
+        <span class="ai-typing">Doubt hai? TalkBot kro</span>
+    </div>
+
+</div>
+        
+            </div>
+
+            <div class="menu-card" onclick="openLeave()">
+                <i class="fa-solid fa-paper-plane leave-icon"></i>
+                <p>Apply Leave</p>
+
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<div id="overlay" onclick="toggleMenu()"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if(!user){
+        window.location.href = "index.html";
+        return;
+    }
+
+    document.getElementById("welcomeText").innerText =
+        "Welcome " + user.name.split(" ")[0] + "! 👋";
+    document.getElementById("fullName").innerText = user.name;
+    document.getElementById("email").innerText = user.email;
+    document.getElementById("roll").innerText = user.roll;
+    
+});
+
+function openTimetable(){
+    window.location.href = "timetable.html";
+}
+
+function openContact(){
+    window.location.href = "contact.html";
+}
+
+function openAttendance(){
+    window.location.href = "attendance.html";
+}
+
+function openFaculty(){
+    window.location.href = "faculty.html";
+}
+
+function openCalender(){
+    window.location.href = "calender.html"; 
+}
+
+function openTransport(){
+    window.location.href = "transport.html";
+}
+
+function openAnnouncement(){
+    window.location.href = "announcement.html";
+}
+function openBot(){
+    window.location.href = "chatbot.html";
+}
+
+function openLeave(){
+    window.location.href = "Leave.html";
+}
+
+function openResult(){
+    window.location.href = "https://result.mdu.ac.in/postexam/result.aspx";
+}
+
+function openNotes(){
+    window.open("https://notesneo.vercel.app/", "_blank");
+}
+
+function openBunkPlanner(){
+    window.location.href = "BunkPlanner.html";
+}
+
+function openAdminFees(){
+    window.location.href = "admin-fees.html";
+}
+
+function openFees(){
+    window.location.href = "fees.html";
+}
+
+function openExam(){
+    window.location.href="exam.html";
+}
+
+// 📸 CLICK → OPEN GALLERY
+function changeProfile(){
+    openOptions();
+}
+// 🔥 POPUP OPEN
+function openOptions(){
+    document.getElementById("photoPopup").style.display="flex";
+}
+
+// ❌ CLOSE POPUP
+function closePopup(){
+    document.getElementById("photoPopup").style.display="none";
+}
+
+// 📷 CHANGE PHOTO
+function changePhoto(){
+    document.getElementById("fileInput").click();
+    closePopup();
+}
+
+// 🗑 DELETE PHOTO
+function deletePhoto(){
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    document.getElementById("profilePic").src = "default.png";
+    localStorage.removeItem("profilePic_" + user.email);
+
+    closePopup();
+}
+
+// 📂 IMAGE SELECT
+document.getElementById("fileInput").addEventListener("change", function(){
+    let file = this.files[0];
+
+    if(file){
+        let reader = new FileReader();
+
+        reader.onload = function(e){
+            let imgData = e.target.result;
+
+            // UI me show
+            document.getElementById("profilePic").src = imgData;
+
+            // ⭐ USER BASED SAVE
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            localStorage.setItem("profilePic_" + user.email, imgData);
+        }
+
+        reader.readAsDataURL(file);
+    }
+});
+
+// 🔁 PAGE LOAD → IMAGE LOAD
+window.addEventListener("DOMContentLoaded", ()=>{
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    if(user){
+        let saved = localStorage.getItem("profilePic_" + user.email);
+
+        if(saved){
+            document.getElementById("profilePic").src = saved;
+        }
+    }
+});
+
+  // ☰ MENU TOGGLE (FINAL FIXED)
+function toggleMenu(){
+    let menu = document.getElementById("sideMenu");
+    let overlay = document.getElementById("overlay");
+
+    menu.classList.toggle("active");
+    overlay.classList.toggle("active");
+
+    // 🔥 body scroll lock
+    document.body.classList.toggle("no-scroll");
+}
+
+// 👤 USER DATA + PROFILE LOAD
+document.addEventListener("DOMContentLoaded", ()=>{
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    if(user){
+        document.getElementById("menuName").innerText = user.name;
+        document.getElementById("menuRoll").innerText = user.roll;
+
+        // profile pic load
+        let saved = localStorage.getItem("profilePic_" + user.email);
+        if(saved){
+            document.getElementById("profilePic").src = saved;
+        }
+    }
+});
+
+// 🚪 LOGOUT
+function logout(){
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html> 

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Fees</title>
+
+<style>
+body{
+font-family:Segoe UI;
+background:#141e30;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:15px;
+width:300px;
+text-align:center;
+}
+
+input, select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+margin-top:10px;
+padding:10px;
+width:100%;
+border:none;
+border-radius:8px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>My Fees</h2>
+
+<p id="feesText">Loading...</p>
+
+<!-- 🔥 ADMIN CONTROLS -->
+<div id="adminPanel" style="display:none;">
+
+<select id="studentSelect">
+<option value="">Select Student</option>
+<option value="hellorajatsharma@gmail.com">Rajat Sharma</option>
+<option value="yravinder818@gmail.com">Ravinder Yadav</option>
+<option value="vishal4bhardwaj@gmail.com">Vishal Bhardwaj</option>
+</select>
+
+<input type="number" id="amount" placeholder="Enter Fees Amount">
+
+<button onclick="saveFees()">Save Fees</button>
+<button onclick="deleteFees()">Delete Fees</button>
+
+</div>
+
+</div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("currentUser"));
+
+if(!user){
+window.location.href="index.html";
+}
+
+// 🔥 SHOW FEES (UPDATED WITH DATE)
+function loadFees(){
+let data = JSON.parse(localStorage.getItem("fees_" + user.email));
+
+if(data){
+document.getElementById("feesText").innerHTML =
+  `₹ ${data.amount} Paid <br><small>Paid on: ${data.date}</small>`;
+}else{
+document.getElementById("feesText").innerText =
+  "No Fees Data Available";
+}
+}
+
+// 🔥 ADMIN CONTROLS SHOW
+if(user.role === "admin"){
+document.getElementById("adminPanel").style.display="block";
+}
+
+// 💾 SAVE (UPDATED WITH DATE)
+function saveFees(){
+let email = document.getElementById("studentSelect").value;
+let amount = document.getElementById("amount").value;
+
+if(!email || !amount){
+alert("Select student and enter amount");
+return;
+}
+
+// 📅 current date
+let today = new Date().toLocaleDateString();
+
+let data = {
+  amount: amount,
+  date: today
+};
+
+localStorage.setItem("fees_" + email, JSON.stringify(data));
+
+alert("Fees Saved ✅");
+loadFees();
+}
+
+// 🗑 DELETE
+function deleteFees(){
+let email = document.getElementById("studentSelect").value;
+
+if(!email){
+alert("Select student");
+return;
+}
+
+localStorage.removeItem("fees_" + email);
+alert("Fees Deleted ❌");
+loadFees();
+}
+
+// LOAD
+loadFees();
+
+</script>
+
+</body>
+</html>

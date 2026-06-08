@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academic Calendar</title>
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: linear-gradient(135deg,#1f3a44,#2b4f5a,#3d6571);
+}
+
+/* CONTAINER */
+
+.container{
+width:650px;
+padding:35px;
+border-radius:16px;
+background:#2f4a55;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+color:white;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.title{
+font-size:28px;
+font-weight:600;
+}
+
+/* SELECT */
+
+select{
+background:#3f5f6b;
+color:white;
+border:none;
+border-radius:8px;
+padding:8px 10px;
+margin-left:6px;
+}
+
+/* WEEK DAYS */
+
+.days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+text-align:center;
+color:#cbd5e1;
+font-size:14px;
+margin-bottom:12px;
+}
+
+/* DATE GRID */
+
+.dates{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+}
+
+/* DATE */
+
+.date{
+padding:16px;
+margin:5px;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+text-align:center;
+transition:0.25s;
+color:#f4c542;
+font-weight:500;
+}
+
+.date:hover{
+background:#f4c542;
+color:black;
+}
+
+/* TODAY */
+
+.today{
+border:2px solid #f4c542;
+}
+
+/* SELECTED */
+
+.selected{
+background:#f4c542;
+color:black;
+}
+
+/* HOLIDAY */
+
+.holiday{
+color:#ff6b6b;
+border-bottom:2px solid #f4c542;
+}
+
+/* REMINDER */
+
+.reminder{
+display:block;
+font-size:11px;
+color:#ffd166;
+margin-top:4px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<div class="title" id="monthYear"></div>
+
+<div>
+<select id="month"></select>
+<select id="year"></select>
+</div>
+</div>
+
+<div class="days">
+<div>SUN</div>
+<div>MON</div>
+<div>TUE</div>
+<div>WED</div>
+<div>THU</div>
+<div>FRI</div>
+<div>SAT</div>
+</div>
+
+<div class="dates" id="dates"></div>
+
+</div>
+
+<script>
+
+const monthNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const month=document.getElementById("month");
+const year=document.getElementById("year");
+const dates=document.getElementById("dates");
+const monthYear=document.getElementById("monthYear");
+
+for(let i=0;i<12;i++){
+let opt=document.createElement("option");
+opt.value=i;
+opt.text=monthNames[i];
+month.appendChild(opt);
+}
+
+for(let y=2000;y<=2035;y++){
+let opt=document.createElement("option");
+opt.value=y;
+opt.text=y;
+year.appendChild(opt);
+}
+
+let today=new Date();
+
+month.value=today.getMonth();
+year.value=today.getFullYear();
+
+/* HOLIDAY LIST */
+
+const holidays={
+"2026-01-01":"New Year's Day",
+"2026-01-26":"Republic Day",
+"2026-03-04":"Holi",
+"2026-03-21":"Id-ul-Fitr",
+"2026-03-26":"Ram Navami",
+"2026-03-31":"Mahavir Jayanti",
+"2026-04-03":"Good Friday",
+"2026-04-14":"Ambedkar Jayanti",
+"2026-08-28":"Raksha Bandhan",
+"2026-05-01":"Buddha Purnima",
+"2026-05-27":"Bakrid",
+"2026-06-26":"Muharram",
+"2026-08-15":"Independence Day",
+"2026-08-26":"Milad-un-Nabi",
+"2026-09-14":"Ganesh Chaturthi",
+"2026-10-02":"Gandhi Jayanti",
+"2026-10-20":"Dussehra",
+"2026-10-29":"Karva Chauth",
+"2026-11-08":"Diwali",
+"2026-11-24":"Guru Nanak Jayanti",
+"2026-12-25":"Christmas"
+};
+
+let reminders=JSON.parse(localStorage.getItem("reminders")) || {};
+
+function render(){
+
+dates.innerHTML="";
+
+let m=parseInt(month.value);
+let y=parseInt(year.value);
+
+monthYear.innerText=monthNames[m]+" "+y;
+
+let firstDay=new Date(y,m,1).getDay();
+let lastDate=new Date(y,m+1,0).getDate();
+
+for(let i=0;i<firstDay;i++){
+dates.innerHTML+="<div></div>";
+}
+
+for(let d=1;d<=lastDate;d++){
+
+let div=document.createElement("div");
+div.className="date";
+div.innerHTML=d;
+
+let full=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+
+if(d===today.getDate() && m===today.getMonth() && y===today.getFullYear()){
+div.classList.add("today");
+}
+
+if(holidays[full]){
+div.classList.add("holiday");
+div.title=holidays[full];
+}
+
+if(reminders[full]){
+let span=document.createElement("span");
+span.className="reminder";
+span.innerText=reminders[full];
+div.appendChild(span);
+}
+
+div.onclick=function(){
+
+if(reminders[full]){
+
+let action=prompt("Type edit or delete");
+
+if(action==="edit"){
+let newText=prompt("Edit reminder",reminders[full]);
+if(newText) reminders[full]=newText;
+}
+
+if(action==="delete"){
+delete reminders[full];
+}
+
+}else{
+
+let text=prompt("Add reminder");
+if(text) reminders[full]=text;
+
+}
+
+localStorage.setItem("reminders",JSON.stringify(reminders));
+render();
+
+}
+
+dates.appendChild(div);
+
+}
+
+}
+
+month.onchange=render;
+year.onchange=render;
+
+render();
+
+ 
+</script>
+
+</body>
+</html>

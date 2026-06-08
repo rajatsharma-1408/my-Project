@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Details</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
+
+    /* Premium gradient background */
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+.faculty-card{
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    width:92%;
+    max-width:450px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+
+.faculty-card h2{
+    text-align:center;
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    padding:12px;
+    background:rgba(0,0,0,0.4);
+    font-size:0.9rem;
+    color:#fcc419;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    font-size:0.88rem;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+.subject{
+    font-weight:600;
+}
+
+.teacher{
+    color:#ced4da;
+}
+
+/* button */
+.back-btn{
+    margin-top:20px;
+    display:block;
+    text-align:center;
+    padding:12px 0;
+    background:#fcc419;
+    color:#000;
+    text-decoration:none;
+    border-radius:20px;
+    font-weight:700;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<div class="faculty-card">
+    <h2>Faculty Details</h2>
+
+    <table>
+        <tr>
+            <th>Subject</th>
+            <th>Faculty</th>
+        </tr>
+
+        <tr>
+            <td class="subject">Advanced Database Management System (ADBMS)</td>
+            <td class="teacher">Ms. Neelam Dahiya</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Compiler Design (CD)</td>
+            <td class="teacher">Ms. Bhawna</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Artificial Intelligence (AI)</td>
+            <td class="teacher">Ms. Archana Rohilla</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Advance JAVA (Adv. JAVA)</td>
+            <td class="teacher">Ms. Ayushi Deewan</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Mobile & Wireless Communication</td>
+            <td class="teacher">Ms. Sonu Rana</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Data Science</td>
+            <td class="teacher">Ms. Richa</td>
+        </tr>
+
+        <tr>
+            <td class="subject">CD Lab</td>
+            <td class="teacher">Ms. Bhawna</td>
+        </tr>
+
+        <tr>
+            <td class="subject">AI Lab</td>
+            <td class="teacher">Ms. Archana Rohilla</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Adv. JAVA Lab</td>
+            <td class="teacher">Ms. Ayushi Deewan</td>
+        </tr>
+
+        <tr>
+            <td class="subject">Mentor</td>
+            <td class="teacher">Ms. Archana Rohilla</td>
+        </tr>
+    </table>
+
+    <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+</div>
+
+</body>
+</html>

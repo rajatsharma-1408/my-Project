@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uniconnect Announcements</title>
+
+<style>
+body {
+  font-family:Segoe UI;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  padding:20px;
+  display:flex;
+  justify-content:center;
+  color:white;
+}
+
+.container { width:100%; max-width:500px; }
+
+/* ADMIN PANEL */
+#adminPanel {
+  background:rgba(255,255,255,0.08);
+  padding:15px;
+  border-radius:20px;
+  margin-bottom:20px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+#adminPanel input, 
+#adminPanel button {
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+/* ADD BUTTON */
+.add-btn {
+  background:#fcc419;
+  color:black;
+  font-weight:600;
+  transition:0.3s;
+}
+.add-btn:hover{
+  transform:scale(1.05);
+}
+
+/* CARDS */
+.card {
+  background:rgba(255,255,255,0.08);
+  border-radius:20px;
+  margin-bottom:15px;
+  overflow:hidden;
+  backdrop-filter:blur(20px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+
+.card-header {
+  background:#fcc419;
+  padding:10px 15px;
+  font-weight:700;
+  display:flex;
+  justify-content:space-between;
+  color:black;
+}
+
+.card-message {
+  padding:12px 15px;
+  color:#e5e7eb;
+}
+
+/* DELETE */
+.actions {
+  padding:10px 15px;
+}
+
+.del-btn {
+  background:#ff6b6b;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.del-btn:hover{
+  transform:scale(1.05);
+}
+
+/* HEADINGS */
+h3{
+  margin-bottom:10px;
+  letter-spacing:1px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" style="display:none;">
+    <h3>Admin Panel</h3>
+    <input type="text" id="annTitle" placeholder="Title">
+    <input type="text" id="annMessage" placeholder="Message">
+    <input type="text" id="annType" placeholder="Type">
+    <button class="add-btn" onclick="createAnnouncement()">Add</button>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div>
+    <h3>Announcements</h3>
+    <div id="announcements"></div>
+  </div>
+
+</div>
+
+<script>
+
+// 🔥 REAL LOGIN USER
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+if(!currentUser){
+  window.location.href = "index.html";
+}
+
+// 🔥 SHOW ADMIN PANEL ONLY FOR ADMIN
+if(currentUser.role === "admin"){
+  document.getElementById("adminPanel").style.display = "block";
+}
+
+// 🔥 LOAD FROM STORAGE
+let announcements = JSON.parse(localStorage.getItem("annData")) || [];
+
+// 🔥 RENDER
+function renderAnnouncements(){
+  const container = document.getElementById("announcements");
+  container.innerHTML = "";
+
+  const filtered = announcements.filter(a =>
+    a.target === "all" || 
+    (currentUser.name && a.target.toLowerCase() === currentUser.name.toLowerCase())
+  );
+
+  filtered.forEach((ann,index)=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="card-header">
+        ${ann.title} [${ann.type}]
+      </div>
+      <div class="card-message">${ann.message}</div>
+      ${currentUser.role==="admin" ? 
+        `<div class="actions">
+          <button class="del-btn" onclick="deleteAnnouncement(${index})">Delete</button>
+        </div>` : ""}
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// ➕ ADD
+function createAnnouncement(){
+  const title = document.getElementById("annTitle").value.trim();
+  const message = document.getElementById("annMessage").value.trim();
+  const type = document.getElementById("annType").value.trim() || "General";
+
+  if(!title || !message){
+    alert("Fill title and message");
+    return;
+  }
+
+  announcements.push({
+    title,
+    message,
+    type,
+    target:"all"
+  });
+
+  localStorage.setItem("annData", JSON.stringify(announcements));
+
+  document.getElementById("annTitle").value="";
+  document.getElementById("annMessage").value="";
+  document.getElementById("annType").value="";
+
+  renderAnnouncements();
+}
+
+// ❌ DELETE
+function deleteAnnouncement(index){
+  if(currentUser.role !== "admin") return;
+
+  announcements.splice(index,1);
+  localStorage.setItem("annData", JSON.stringify(announcements));
+
+  renderAnnouncements();
+}
+
+// LOAD
+renderAnnouncements();
+
+</script>
+
+</body>
+</html>

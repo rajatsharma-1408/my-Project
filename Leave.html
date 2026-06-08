@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Leave</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+/* CONTAINER (BIGGER) */
+
+.container{
+width:580px; /* increased */
+background:rgba(255,255,255,0.08);
+padding:45px;
+border-radius:22px;
+color:white;
+box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+/* INPUTS */
+
+input, textarea{
+width:100%;
+margin:15px 0;
+padding:15px;
+border:none;
+border-radius:12px;
+background:rgba(255,255,255,0.1);
+color:white;
+}
+
+textarea{
+height:110px;
+resize:none;
+}
+
+/* BUTTONS */
+
+button{
+width:100%;
+padding:16px;
+border:none;
+border-radius:14px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#ffd43b;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+background:#222;
+color:white;
+}
+
+.back-btn:hover{
+background:#444;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Apply Leave</h2>
+
+<input type="text" id="name" readonly>
+<input type="text" id="roll" readonly>
+
+<input type="date" id="from">
+<input type="date" id="to">
+
+<textarea id="reason" placeholder="Enter reason"></textarea>
+
+<button onclick="applyLeave()">Submit Leave</button>
+
+<button class="back-btn" onclick="goBack()">⬅ Back to Dashboard</button>
+
+</div>
+
+<script>
+
+// USER DATA
+const user = JSON.parse(localStorage.getItem("currentUser"));
+
+document.getElementById("name").value = user.name;
+document.getElementById("roll").value = user.roll;
+
+// ENTER KEY SUBMIT 🔥
+document.addEventListener("keydown", function(e){
+if(e.key === "Enter"){
+applyLeave();
+}
+});
+
+function applyLeave(){
+
+let from = document.getElementById("from").value;
+let to = document.getElementById("to").value;
+let reason = document.getElementById("reason").value;
+
+// VALIDATION
+if(!from || !to || !reason){
+alert("Fill all fields");
+return;
+}
+
+// SAVE DATA
+let leave = {
+name:user.name,
+roll:user.roll,
+from:from,
+to:to,
+reason:reason
+};
+
+let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+leaves.push(leave);
+localStorage.setItem("leaves", JSON.stringify(leaves));
+
+// WHATSAPP MESSAGE
+let msg = `Leave Application
+Name: ${user.name}
+Roll: ${user.roll}
+From: ${from}
+To: ${to}
+Reason: ${reason}`;
+
+let phone = "919017080655"; // 👈 apna number daal
+
+let url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+
+// REDIRECT
+window.open(url, "_blank");
+
+}
+
+// BACK BUTTON FUNCTION
+function goBack(){
+window.location.href = "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>

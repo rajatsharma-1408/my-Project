@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exam Schedule</title>
+
+<style>
+body{
+font-family:Segoe UI;
+background:#141e30;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:15px;
+width:420px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+padding:10px;
+border:1px solid #444;
+text-align:center;
+}
+
+th{
+background:#fcc419;
+color:black;
+}
+
+input{
+width:100%;
+padding:8px;
+margin-top:8px;
+border-radius:8px;
+border:none;
+}
+
+button{
+margin-top:10px;
+padding:10px;
+width:100%;
+border:none;
+border-radius:10px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+
+.delete-btn{
+background:#ff6b6b;
+margin-top:5px;
+padding:5px;
+font-size:12px;
+}
+
+.view-msg{
+text-align:center;
+margin-top:10px;
+color:#ccc;
+font-size:13px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Exam Schedule</h2>
+
+<!-- ✅ ADMIN PANEL -->
+<div id="adminPanel">
+<input type="text" id="sub" placeholder="Subject">
+<input type="date" id="date">
+<button onclick="addExam()">➕ Add Exam</button>
+</div>
+
+<table>
+<tr>
+<th>Subject</th>
+<th>Date</th>
+<th id="actionHead">Action</th>
+</tr>
+
+<tbody id="table"></tbody>
+
+</table>
+
+
+
+</div>
+
+<script>
+
+// 👤 USER
+const user = JSON.parse(localStorage.getItem("currentUser"));
+
+// 📊 DATA LOAD (localStorage)
+let exams = JSON.parse(localStorage.getItem("examData")) || [
+  {subject:"ADBMS", date:"2026-05-10"},
+  {subject:"MWC", date:"2026-05-13"}
+];
+
+// 🔐 ROLE CHECK
+if(!user || user.role !== "admin"){
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("actionHead").style.display="none";
+ 
+}
+
+// 📋 RENDER TABLE
+function render(){
+let html="";
+
+exams.forEach((e,i)=>{
+html+=`
+<tr>
+<td>${e.subject}</td>
+<td>${e.date}</td>
+
+${user && user.role==="admin" ? 
+`<td><button class="delete-btn" onclick="deleteExam(${i})">Delete</button></td>` 
+: ""}
+
+</tr>`;
+});
+
+document.getElementById("table").innerHTML=html;
+}
+
+// ➕ ADD EXAM (ADMIN)
+function addExam(){
+let sub=document.getElementById("sub").value.trim();
+let date=document.getElementById("date").value;
+
+if(!sub || !date){
+alert("Fill all fields");
+return;
+}
+
+exams.push({subject:sub,date:date});
+
+localStorage.setItem("examData", JSON.stringify(exams));
+
+document.getElementById("sub").value="";
+document.getElementById("date").value="";
+
+render();
+}
+
+// ❌ DELETE EXAM (ADMIN)
+function deleteExam(i){
+exams.splice(i,1);
+localStorage.setItem("examData", JSON.stringify(exams));
+render();
+}
+
+// 🚀 LOAD
+render();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bunk Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#141e30,#243b55);
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+}
+
+/* CARD */
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+text-align:center;
+width:90%;
+max-width:400px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.icon{
+font-size:40px;
+color:#fcc419;
+margin-bottom:10px;
+}
+
+.percent{
+font-size:50px;
+font-weight:bold;
+margin:10px 0;
+}
+
+.msg{
+font-size:18px;
+margin-top:10px;
+}
+
+
+
+/* BUTTON */
+button{
+margin-top:20px;
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<div class="icon">
+<i class="fa-solid fa-user-ninja"></i>
+</div>
+
+<h2>Bunk Planner</h2>
+
+<div class="percent" id="percent">0%</div>
+<div class="msg" id="msg">Calculating...</div>
+
+<button onclick="goBack()">Back</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<script>
+
+function calculate(){
+
+const user = JSON.parse(localStorage.getItem("currentUser"));
+if(!user){
+  window.location.href = "index.html";
+}
+let data = JSON.parse(localStorage.getItem("attData_" + user.email)) || {};
+
+let total = 0;
+let present = 0;
+
+for(let date in data){
+  data[date].forEach(s=>{
+    if(s.status==="P" || s.status==="A"){
+      total++;
+      if(s.status==="P") present++;
+    }
+  });
+}
+
+let percent = total ? Math.round((present/total)*100) : 0;
+
+let bunk = 0;
+
+if(total > 0){
+  bunk = Math.floor((present / 0.75) - total);
+  if(bunk < 0) bunk = 0;
+}
+
+document.getElementById("percent").innerText = percent + "%";
+
+let msg = "";
+
+if(total === 0){
+  msg = "No attendance data 📊";
+}
+else if(percent < 75){
+  msg = "⚠ Low Attendance";
+}
+else{
+  msg = "You can bunk " + bunk + " classes 😈";
+}
+
+document.getElementById("msg").innerText = msg;
+
+// color change
+if(percent < 75){
+  document.getElementById("percent").style.color = "#ff6b6b";
+}else{
+  document.getElementById("percent").style.color = "#51cf66";
+}
+
+}
+
+function goBack(){
+window.location.href="dashboard.html";
+}
+
+calculate();
+
+</script>
+
+</body>
+</html>

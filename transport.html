@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transport</title>
+
+<!-- ✅ LEAFLET CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+body{
+font-family:Segoe UI;
+background:linear-gradient(135deg,#141e30,#243b55);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+flex-direction:column;
+margin:0;
+}
+
+/* CARD */
+.box{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:20px;
+width:350px;
+text-align:center;
+backdrop-filter:blur(10px);
+}
+
+/* INPUT */
+select, button{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+}
+
+/* BUTTON */
+button{
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* MAP */
+#map{
+height:300px;
+width:100%;
+margin-top:20px;
+border-radius:15px;
+}
+
+/* RESULT */
+.result{
+margin-top:15px;
+font-size:15px;
+line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🚌 Transport Route</h2>
+
+<select id="from">
+<option value="">From</option>
+<option>College</option>
+<option>Panipat</option>
+<option>Delhi</option>
+<option>College</option>
+</select>
+
+<select id="to">
+<option value="">To</option>
+<option>College</option>
+<option>Panipat</option>
+<option>Delhi</option>
+<option>Sidhrawali</option>
+<option>Rathiwas</option>
+<option>Pataudi</option>
+<option>Manesar</option>
+<option>DLF</option>
+<option>Dwarka</option>
+<option>Dharuhera</option>
+<option>Kosli</option>
+</select>
+
+<button onclick="findBus()">Find Bus</button>
+
+<div id="map"></div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<!-- ✅ LEAFLET JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+// 🧠 BUS DATA
+const routes = [
+  {from:"College", to:"Delhi", time:"7:00 AM", bus:"Bus 1",
+   points:[[28.7041,77.1025],[28.61,77.20]]},
+
+  {from:"College", to:"Panipat", time:"2:30 AM", bus:"Bus 2",
+   points:[[28.7041,77.1025],[29.39,76.96]]},
+
+  {from:"Delhi", to:"College", time:"3:00 AM", bus:"Bus 3",
+   points:[[28.61,77.20],[28.7041,77.1025]]},
+
+   {from:"College", to:"Sidhrawali", time:"7:00 AM", bus:"Bus 4",
+   points:[[28.4744,77.0266],[28.2460,76.7785]]},
+
+   {from:"College", to:"Rathiwas", time:"6:30 AM", bus:"Bus 5",
+   points:[[28.4744,77.0266],[28.3660,76.5430]]},
+
+  {from:"college", to:"Pataudi", time:"7.30 AM", bus:"Bus 6",
+   points:[[28.4744,77.0266],[28.3257,76.7789]]},
+
+   {from:"College", to:"Manesar", time:"6:00 AM", bus:"Bus 7",
+   points:[[28.4744,77.0266],[28.3515,76.9428]]},
+
+   {from:"College", to:"DLF", time:"7:30 AM", bus:"Bus 8",
+   points:[[28.4744,77.0266],[28.4936,77.0890]]},
+
+   {from:"College", to:"Dwarka", time:"6:30 AM", bus:"Bus 10",
+   points:[[28.4744,77.0266],[28.5921,77.0460]]},
+
+   {from:"College", to:"Dharuhera", time:"7:00 AM", bus:"Bus 11",
+   points:[[28.4744,77.0266],[28.2055,76.7969]]},
+  
+   {from:"College", to:"Kosli", time:"5.30 AM", bus:"Bus 13",
+   points:[[28.4744,77.0266],[28.4363,76.3878]]},
+
+
+
+
+
+
+
+];
+
+// 🌍 MAP INIT
+var map = L.map('map').setView([28.7041, 77.1025], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © OpenStreetMap'
+}).addTo(map);
+
+let currentLine;
+let busMarker;
+
+// 🚀 MAIN FUNCTION
+function findBus(){
+
+let from = document.getElementById("from").value;
+let to = document.getElementById("to").value;
+
+if(!from || !to){
+  document.getElementById("result").innerText =
+  "Please select both origin and destination.";
+  return;
+}
+
+// find route
+let found = routes.find(r => r.from===from && r.to===to);
+
+if(!found){
+  document.getElementById("result").innerText =
+  "No direct bus service is available for the selected route.";
+  return;
+}
+
+// clear old
+if(currentLine) map.removeLayer(currentLine);
+if(busMarker) map.removeLayer(busMarker);
+
+// draw route
+currentLine = L.polyline(found.points, {color:'yellow'}).addTo(map);
+map.fitBounds(currentLine.getBounds());
+
+// bus marker
+busMarker = L.marker(found.points[0]).addTo(map);
+
+// animation
+let i = 0;
+let route = found.points;
+
+let interval = setInterval(()=>{
+    i++;
+    if(i < route.length){
+        busMarker.setLatLng(route[i]);
+    }else{
+        clearInterval(interval);
+    }
+},1500);
+
+// result show (PROFESSIONAL TEXT)
+document.getElementById("result").innerHTML =
+`<b>Route:</b> ${from} → ${to}<br>
+ <b>Bus:</b> ${found.bus}<br>
+ <b>Departure Time:</b> ${found.time}<br>
+ <b>Status:</b> Bus is en route`;
+
+}
+
+</script>
+
+</body>
+</html>

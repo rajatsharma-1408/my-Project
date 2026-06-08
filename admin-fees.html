@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Manage Fees</title>
+
+<style>
+body{
+font-family:Segoe UI;
+background:#141e30;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:15px;
+width:350px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:10px;
+width:100%;
+border:none;
+border-radius:8px;
+background:#fcc419;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Manage Fees</h2>
+
+<input type="text" id="email" placeholder="Student Email">
+<input type="number" id="amount" placeholder="Fees Amount">
+
+<button onclick="saveFees()">Save Fees</button>
+
+</div>
+
+<script>
+
+// 🔐 ADMIN CHECK
+const user = JSON.parse(localStorage.getItem("currentUser"));
+if(!user || user.role !== "admin"){
+  alert("Access Denied");
+  window.location.href = "dashboard.html";
+}
+
+// 💾 SAVE FEES
+function saveFees(){
+let email = document.getElementById("email").value;
+let amount = document.getElementById("amount").value;
+
+if(!email || !amount){
+alert("Fill all fields");
+return;
+}
+
+// ⭐ USER BASED STORAGE
+localStorage.setItem("fees_" + email, amount);
+
+alert("Fees Updated ✅");
+}
+</script>
+
+</body>
+</html>
